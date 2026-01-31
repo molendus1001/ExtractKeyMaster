@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
     - name: Setup Android NDK
       uses: nttld/setup-ndk@v1
@@ -16,8 +17,22 @@ jobs:
 
     - name: Build with NDK
       run: |
-        # Build specifically for Android 7 (API 24)
-        ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk APP_PLATFORM=android-24
+        echo "Searching for Android.mk..."
+        MK_PATH=$(find . -name Android.mk)
+        
+        if [ -z "$MK_PATH" ]; then
+          echo "Error: Android.mk not found!"
+          exit 1
+        fi
+        
+        echo "Found Android.mk at: $MK_PATH"
+        
+        # We define the project path based on where we found the file
+        # If it is in ./jni/Android.mk, NDK expects us to be in root.
+        # If it is in ./Android.mk, we need to be explicit.
+        
+        # This command forces NDK to use the file we found, no matter where it is:
+        ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT="$MK_PATH" APP_PLATFORM=android-24
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
