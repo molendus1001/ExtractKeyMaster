@@ -32,7 +32,7 @@ jobs:
         # If it is in ./Android.mk, we need to be explicit.
         
         # This command forces NDK to use the file we found, no matter where it is:
-        ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT="$MK_PATH" APP_PLATFORM=android-24
+        ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT="$MK_PATH" APP_PLATFORM=android-21 APP_STL=c++_static
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
